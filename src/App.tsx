@@ -1,35 +1,82 @@
 // src/App.tsx
+import { useEffect, useCallback, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Sprints from './pages/Sprints';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import PrivateRoute from './routes/PrivateRoute';
 import PublicRoute from './routes/PublicRoute';
+import { supabase } from './lib/supabase';
+import { loginUser } from './store/reducers/auth';
+import { RootState } from './store';
 
 function App() {
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state: RootState) => state.auth.currentUser);
+
+  const syncAuthState = useCallback(async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
+
+    if (user && !currentUser) {
+      dispatch(
+        loginUser({
+          id: user.id,
+          email: user.email ?? '',
+          name: user.user_metadata?.name ?? '',
+        })
+      );
+    }
+  }, [dispatch, currentUser]);
+
+  useEffect(() => {
+    syncAuthState();
+
+    // Optional: listen to auth changes (e.g., from another tab)
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      const user = session?.user;
+      if (user) {
+        dispatch(
+          loginUser({
+            id: user.id,
+            email: user.email ?? '',
+            name: user.user_metadata?.name ?? '',
+          })
+        );
+      }
+    });
+
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, [syncAuthState, dispatch]);
+
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          {/* Public Route */}
-          <Route element={<PublicRoute />}>
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-          </Route>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<MainLayout />}>
+            {/* Public Routes */}
+            <Route element={<PublicRoute />}>
+              <Route path="login" element={<Login />} />
+              <Route path="register" element={<Register />} />
+            </Route>
 
-          {/* Private Route */}
-          <Route element={<PrivateRoute />}>
-            <Route path="sprints" element={<Sprints />} />
-          </Route>
+            {/* Private Routes */}
+            <Route element={<PrivateRoute />}>
+              <Route path="sprints" element={<Sprints />} />
+            </Route>
 
-          {/* Default Home Route (accessible to all) */}
-          <Route index element={<Home />} />
-        </Route>
-      </Routes>
+            {/* Home Route */}
+            <Route index element={<Home />} />
+          </Route>
+        </Routes>
+      </Suspense>
 
       <ToastContainer />
     </BrowserRouter>

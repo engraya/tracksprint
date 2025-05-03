@@ -9,3 +9,15 @@ export interface RegisterFormValues {
   email: string;
   password: string;
 }  
+
+
+export interface User {
+  id: string;
+  email: string;
+  [key: string]: any; 
+}
+
+export interface AuthState {
+  currentUser: User | null;
+  isAuthenticated: boolean;
+}

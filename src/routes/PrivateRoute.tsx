@@ -5,7 +5,7 @@ import { RootState } from "../store";
 
 const PrivateRoute = () => {
   const isLoggedIn = useSelector((state : RootState) => state.auth.currentUser);
-  return !isLoggedIn  ? <Navigate to="/auth" /> : <Outlet />;
+  return !isLoggedIn  ? <Navigate to="/" /> : <Outlet />;
   
 };
 

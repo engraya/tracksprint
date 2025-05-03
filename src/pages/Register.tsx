@@ -13,11 +13,21 @@ import ForgotPassword from '../components/ForgotPassword';
 import { RegisterContainer, Card } from '../components/shared';
 import { registerSchema } from '../validations/authSchema';
 import { RegisterFormValues } from '../types/authTypes';
-
+import { supabase } from '../lib/supabase';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../store/reducers/auth';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Register() {
   const [open, setOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false); 
   const handleClose = () => setOpen(false);
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+  
 
   const initialValues: RegisterFormValues = {
     name: '',
@@ -26,10 +36,50 @@ export default function Register() {
     password: '',
   };
 
-  const handleSubmit = (values: RegisterFormValues) => {
-    console.log("Registration Credentials", values);
-    // Submit registration logic
-  };
+
+    const handleSubmit = async (values: RegisterFormValues) => {
+      setLoading(true); 
+      const { data, error } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+      });
+  
+      if (error) {
+        toast.error(error.message || "Something went wrong!", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light"
+          });
+          setLoading(false);
+          return;
+      }
+  
+      if (data?.user) {
+        const userData = {
+          id: data.user.id,
+          email: data?.user.email ?? ''
+        };
+        dispatch(loginUser(userData));
+        toast.success('Registration successful!!...', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light"
+          });
+        navigate('/sprints'); 
+      }
+      
+    setLoading(false);
+    };
 
   return (
     <>
@@ -127,8 +177,14 @@ export default function Register() {
 
                   <ForgotPassword open={open} handleClose={handleClose} />
 
-                  <Button type="submit" fullWidth variant="contained">
-                    Register
+                  <Button 
+                    type="submit" 
+                    fullWidth 
+                    variant="contained"
+                    disabled={loading}
+                    startIcon={loading ? <CircularProgress size={20} /> : null}
+                    >
+                    {loading ? 'Registering...' : 'Register'}
                   </Button>
                 </Box>
               </Form>

@@ -13,10 +13,21 @@ import ForgotPassword from '../components/ForgotPassword';
 import { Card, SignInContainer } from '../components/shared';
 import { loginSchema } from '../validations/authSchema';
 import { LoginFormValues } from '../types/authTypes';
-
+import { supabase } from '../lib/supabase'; 
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../store/reducers/auth';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Login() {
   const [open, setOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false); 
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+
   const handleClose = () => setOpen(false);
 
   const initialValues: LoginFormValues = {
@@ -24,9 +35,47 @@ export default function Login() {
     password: '',
   };
 
-  const handleSubmit = (values: LoginFormValues) => {
-    console.log("Login Credentials", values);
-    // Submit login request here
+  const handleSubmit = async (values: LoginFormValues) => {
+    setLoading(true); 
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: values.email,
+      password: values.password,
+    });
+
+    setLoading(false); 
+
+    if (error) {
+      toast.error(error.message || "Something went wrong!", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light"
+        });
+      return;
+    }
+
+    if (data?.user) {
+      const user = {
+        id: data.user.id,
+        email: data.user.email ?? ''
+      };
+      dispatch(loginUser(user));
+      toast.success('Login successful!!...', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light"
+        });
+      navigate('/sprints'); 
+    }
   };
 
   return (
@@ -97,8 +146,10 @@ export default function Login() {
                     type="submit"
                     fullWidth
                     variant="contained"
+                    disabled={loading} 
+                    endIcon={loading ? <CircularProgress size={24} color="inherit" /> : null}
                   >
-                    Sign in
+                    {loading ? 'Signing In...' : 'Sign in'}
                   </Button>
                 </Box>
               </Form>
