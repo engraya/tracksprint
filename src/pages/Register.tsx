@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Formik, Form } from 'formik';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -8,101 +9,26 @@ import FormControl from '@mui/material/FormControl';
 import { Link } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
 import ForgotPassword from '../components/ForgotPassword';
+import { RegisterContainer, Card } from '../components/shared';
+import { registerSchema } from '../validations/authSchema';
+import { RegisterFormValues } from '../types/authTypes';
 
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignSelf: 'center',
-  width: '100%',
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: 'auto',
-  [theme.breakpoints.up('sm')]: {
-    maxWidth: '450px',
-  },
-  boxShadow:
-    'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-  ...theme.applyStyles('dark', {
-    boxShadow:
-      'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
-  }),
-}));
-
-const RegisterContainer = styled(Stack)(({ theme }) => ({
-  height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
-  minHeight: '100%',
-  padding: theme.spacing(2),
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(4),
-  },
-  '&::before': {
-    content: '""',
-    display: 'block',
-    position: 'absolute',
-    zIndex: -1,
-    inset: 0,
-    backgroundImage:
-      'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
-    backgroundRepeat: 'no-repeat',
-    ...theme.applyStyles('dark', {
-      backgroundImage:
-        'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
-    }),
-  },
-}));
 
 export default function Register() {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const handleClose = () => setOpen(false);
 
-  const handleClose = () => {
-    setOpen(false);
+  const initialValues: RegisterFormValues = {
+    name: '',
+    surname: '',
+    email: '',
+    password: '',
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (emailError || passwordError) {
-      event.preventDefault();
-      return;
-    }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
-
-  const validateInputs = () => {
-    const email = document.getElementById('email') as HTMLInputElement;
-    const password = document.getElementById('password') as HTMLInputElement;
-
-    let isValid = true;
-
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
-    }
-
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage('');
-    }
-
-    return isValid;
+  const handleSubmit = (values: RegisterFormValues) => {
+    console.log("Registration Credentials", values);
+    // Submit registration logic
   };
 
   return (
@@ -117,94 +43,103 @@ export default function Register() {
           >
             Register
           </Typography>
-          <Box
-            component="form"
+
+          <Formik
+            initialValues={initialValues}
+            validationSchema={registerSchema}
             onSubmit={handleSubmit}
-            noValidate
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
-              gap: 2,
-            }}
           >
-            <FormControl>
-                <FormLabel htmlFor="firstName">First Name</FormLabel>
-                <TextField
-                id="firstName"
-                name="firstName"
-                placeholder="John"
-                autoComplete="given-name"
-                required
-                fullWidth
-                variant="outlined"
-                />
-            </FormControl>
-            <FormControl>
-                <FormLabel htmlFor="lastName">Last Name</FormLabel>
-                <TextField
-                id="lastName"
-                name="lastName"
-                placeholder="Doe"
-                autoComplete="family-name"
-                required
-                fullWidth
-                variant="outlined"
-                />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
-              <TextField
-                error={emailError}
-                helperText={emailErrorMessage}
-                id="email"
-                type="email"
-                name="email"
-                placeholder="your@email.com"
-                autoComplete="email"
-                autoFocus
-                required
-                fullWidth
-                variant="outlined"
-                color={emailError ? 'error' : 'primary'}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <TextField
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                name="password"
-                placeholder="••••••"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                autoFocus
-                required
-                fullWidth
-                variant="outlined"
-                color={passwordError ? 'error' : 'primary'}
-              />
-            </FormControl>
-            <ForgotPassword open={open} handleClose={handleClose} />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-            >
-                Register
-            </Button>
-          </Box>
+            {({ values, errors, touched, handleChange, handleBlur }) => (
+              <Form>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '100%',
+                    gap: 2,
+                  }}
+                >
+                  <FormControl>
+                    <FormLabel htmlFor="firstName">First Name</FormLabel>
+                    <TextField
+                      id="name"         
+                      name="name"         
+                      placeholder="John"
+                      autoComplete="given-name"
+                      fullWidth
+                      value={values.name}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.name && Boolean(errors.name)}
+                      helperText={touched.name && errors.name}
+                    />
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel htmlFor="lastName">Last Name</FormLabel>
+                    <TextField
+                      id="surname"         
+                      name="surname"      
+                      placeholder="Doe"
+                      autoComplete="family-name"
+                      fullWidth
+                      value={values.surname}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.surname && Boolean(errors.surname)}
+                      helperText={touched.surname && errors.surname}
+                    />
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel htmlFor="email">Email</FormLabel>
+                    <TextField
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="your@email.com"
+                      autoComplete="email"
+                      fullWidth
+                      value={values.email}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.email && Boolean(errors.email)}
+                      helperText={touched.email && errors.email}
+                    />
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel htmlFor="password">Password</FormLabel>
+                    <TextField
+                      id="password"
+                      name="password"
+                      type="password"
+                      placeholder="••••••"
+                      autoComplete="new-password"
+                      fullWidth
+                      value={values.password}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.password && Boolean(errors.password)}
+                      helperText={touched.password && errors.password}
+                    />
+                  </FormControl>
+
+                  <ForgotPassword open={open} handleClose={handleClose} />
+
+                  <Button type="submit" fullWidth variant="contained">
+                    Register
+                  </Button>
+                </Box>
+              </Form>
+            )}
+          </Formik>
+
           <Divider>or</Divider>
+
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography sx={{ textAlign: 'center' }}>
-              Don&apos;t have an account?{' '}
-              <Link
-                to="/login"
-              >
-                Login
-              </Link>
+              Already have an account? <Link to="/login">Login</Link>
             </Typography>
           </Box>
         </Card>
