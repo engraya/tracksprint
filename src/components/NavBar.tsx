@@ -44,6 +44,7 @@ import { useNavigate } from 'react-router-dom';
     ? [
         { name: 'Home', path: '/' },
         { name: 'Sprints', path: '/sprints' },
+        { name: 'Tasks', path: '/tasks' },
       ]
     : [
         { name: 'Home', path: '/' },

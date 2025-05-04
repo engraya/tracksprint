@@ -1,4 +1,3 @@
-// src/App.tsx
 import { useEffect, useCallback, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,6 +13,7 @@ import PublicRoute from './routes/PublicRoute';
 import { supabase } from './lib/supabase';
 import { loginUser } from './store/reducers/auth';
 import { RootState } from './store';
+import Tasks from './pages/Tasks';
 
 function App() {
   const dispatch = useDispatch();
@@ -70,6 +70,7 @@ function App() {
             {/* Private Routes */}
             <Route element={<PrivateRoute />}>
               <Route path="sprints" element={<Sprints />} />
+              <Route path="tasks" element={<Tasks />} />
             </Route>
 
             {/* Home Route */}
