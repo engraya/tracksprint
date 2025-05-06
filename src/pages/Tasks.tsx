@@ -1,37 +1,41 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback  } from 'react';
 import {
   Box,
   Typography,
   Button,
   Collapse,
   List,
-  ListItem,
   ListItemText,
   Divider,
   Chip,
   Card,
   CardContent,
+  Menu,
+  MenuItem,
+  CircularProgress,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { supabase } from '../lib/supabase';
 import CreateTaskModal from '../components/modals/CreateTaskModal';
-import CircularProgress from '@mui/material/CircularProgress';
+import DeleteTaskModal from '../components/modals/DeleteTaskModal';
+import { Task } from '../types/tasksTypes';
+import ListItem from '@mui/material/ListItem';
 
 function Tasks() {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [visibleCount, setVisibleCount] = useState(5);
-  const [expanded, setExpanded] = useState({});
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [openModal, setOpenModal] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isUpdate, setIsUpdate] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  useEffect(() => {
-    fetchTasks();
-  }, []);
+ 
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('tasks')
@@ -42,37 +46,56 @@ function Tasks() {
       console.error('Error fetching tasks:', error);
     } else {
       setTasks(data || []);
+      const defaultExpanded = (data || []).reduce((acc, task) => {
+        if (buildTree(data, task.id).length > 0) {
+          acc[task.id] = true;
+        }
+        return acc;
+      }, {});
+      setExpanded(defaultExpanded);
     }
     setLoading(false);
-  };
+  }, []);
 
-  const buildTree = (tasks, parentId = null) =>
+  useEffect(() => {
+    fetchTasks(); // ✅ Now safe
+  }, [fetchTasks]);
+
+  const buildTree = (tasks: Task[], parentId: string | null = null): Task[] =>
     tasks.filter((task) => task.parent_id === parentId);
+  
 
-  const toggleExpand = (id) => {
-    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
+  // const toggleExpand = (id) => {
+  //   setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
+  // };
 
-  const handleTaskClick = (task) => {
+  const handleTaskClick = (task : Task) => {
+    // Set selected task for updating and open the update modal
     setSelectedTask(task);
     setIsUpdate(true);
     setOpenModal(true);
   };
 
-  const handleTaskRightClick = (e, task) => {
-    e.preventDefault();
-    setSelectedTask(task);
-    setIsUpdate(true);
-    setOpenModal(true);
+const handleContextMenu = (
+  e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  task: Task
+) => {
+  e.preventDefault(); // Prevent the default right-click menu
+  setSelectedTask(task); // Store selected task
+  setAnchorEl(e.currentTarget); // Open the custom context menu
+};
+
+
+  const handleMenuClose = () => {
+    setAnchorEl(null); // Close the context menu
   };
 
-  const handleModalClose = () => {
-    setOpenModal(false);
-    setSelectedTask(null);
-    setIsUpdate(false);
+  const handleDeleteTask = () => {
+    setOpenDeleteModal(true); // Open the delete task confirmation modal
+    handleMenuClose(); // Close the context menu
   };
 
-  const renderTasks = (parentId = null, depth = 0) => {
+  const renderTasks = (parentId: string | null = null, depth = 0) => {
     const parentTasks = buildTree(tasks, parentId).slice(0, visibleCount);
 
     return parentTasks.map((task) => {
@@ -86,7 +109,7 @@ function Tasks() {
           <ListItem
             button
             onClick={() => handleTaskClick(task)}
-            onContextMenu={(e) => handleTaskRightClick(e, task)}
+            onContextMenu={(e) => handleContextMenu(e, task)}  
           >
             <ListItemText
               primary={
@@ -131,7 +154,7 @@ function Tasks() {
           onClick={() => {
             setOpenModal(true);
             setSelectedTask(null);
-            setIsUpdate(false);
+            setIsUpdate(false); 
           }}
         >
           + Create Task
@@ -161,13 +184,33 @@ function Tasks() {
         </Box>
       )}
 
+      {/* Conditionally render the CreateTaskModal or UpdateTaskModal based on isUpdate */}
       <CreateTaskModal
         open={openModal}
-        onClose={handleModalClose}
+        onClose={() => setOpenModal(false)}
         onTaskCreated={fetchTasks}
-        task={selectedTask}
-        isUpdate={isUpdate}
+        task={selectedTask}  // Task data is passed here (null for creating)
+        isUpdate={isUpdate}  // Decide if it's create or update mode
       />
+
+      {/* Delete Task Confirmation Modal */}
+      {selectedTask && (
+        <DeleteTaskModal
+          open={openDeleteModal}
+          onClose={() => setOpenDeleteModal(false)}
+          taskId={selectedTask.id}
+          onTaskDeleted={fetchTasks}
+        />
+      )}
+
+      {/* Custom Right-click Menu */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={handleDeleteTask}>Delete Task</MenuItem>
+      </Menu>
     </Box>
   );
 }

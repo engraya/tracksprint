@@ -9,7 +9,6 @@ export const store = configureStore({
   reducer: rootReducer,
 });
 
-// Types *after* store is defined
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 

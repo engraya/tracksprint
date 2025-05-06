@@ -1,0 +1,1 @@
+export const statusOptions = ['Open', 'Working', 'Completed'];

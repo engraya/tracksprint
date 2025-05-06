@@ -1,4 +1,3 @@
-// src/pages/Sprints.tsx
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import {
@@ -6,17 +5,12 @@ import {
   Typography,
   Button,
   Card,
-  CardContent,
-  Grid,
+  CardContent
 } from '@mui/material';
 import CreateSprintModal from '../components/modals/CreateSprintModal';
 import CircularProgress from '@mui/material/CircularProgress';
-
-type Sprint = {
-  id: string;
-  name: string;
-  created_at: string;
-};
+import { Sprint } from '../types/tasksTypes';
+import Grid from '@mui/material/Grid';
 
 function Sprints() {
   const [sprints, setSprints] = useState<Sprint[]>([]);
@@ -81,6 +75,7 @@ function Sprints() {
         ) : (
           <Grid container spacing={2}>
           {sprints.map((sprint) => (
+            // @ts-ignore
             <Grid item xs={12} sm={6} md={4} key={sprint.id}>
               <Card variant="outlined">
                 <CardContent>
@@ -95,7 +90,6 @@ function Sprints() {
           ))}
         </Grid>
         )}
-
       <CreateSprintModal
         open={isModalOpen}
         onClose={handleCloseModal}

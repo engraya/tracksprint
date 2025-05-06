@@ -9,7 +9,6 @@ import FormControl from '@mui/material/FormControl';
 import { Link } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import ForgotPassword from '../components/ForgotPassword';
 import { Card, SignInContainer } from '../components/shared';
 import { loginSchema } from '../validations/authSchema';
 import { LoginFormValues } from '../types/authTypes';
@@ -21,14 +20,12 @@ import { toast } from 'react-toastify';
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Login() {
-  const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false); 
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
 
-  const handleClose = () => setOpen(false);
 
   const initialValues: LoginFormValues = {
     email: '',
@@ -139,9 +136,6 @@ export default function Login() {
                       helperText={touched.password && errors.password}
                     />
                   </FormControl>
-
-                  <ForgotPassword open={open} handleClose={handleClose} />
-
                   <Button
                     type="submit"
                     fullWidth

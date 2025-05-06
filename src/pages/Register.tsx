@@ -9,7 +9,6 @@ import FormControl from '@mui/material/FormControl';
 import { Link } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import ForgotPassword from '../components/ForgotPassword';
 import { RegisterContainer, Card } from '../components/shared';
 import { registerSchema } from '../validations/authSchema';
 import { RegisterFormValues } from '../types/authTypes';
@@ -21,9 +20,8 @@ import { toast } from 'react-toastify';
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Register() {
-  const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false); 
-  const handleClose = () => setOpen(false);
+
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -174,9 +172,6 @@ export default function Register() {
                       helperText={touched.password && errors.password}
                     />
                   </FormControl>
-
-                  <ForgotPassword open={open} handleClose={handleClose} />
-
                   <Button 
                     type="submit" 
                     fullWidth 

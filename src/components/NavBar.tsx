@@ -9,7 +9,6 @@ import {
     List,
     ListItemButton,
     ListItemText,
-    Avatar,
   } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useLocation } from 'react-router-dom';
@@ -19,7 +18,7 @@ import { RootState } from '../store';
 import { logoutUser } from '../store/reducers/auth';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
-  
+import UserAvatar from './UserAvatar';  
   const Navbar = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const location = useLocation();
@@ -69,18 +68,6 @@ import { useNavigate } from 'react-router-dom';
             >
               TrackSprint
             </Typography>
-
-          {/* Center Username */}
-          {currentUser && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Avatar sx={{ bgcolor: '#1976d2' }}>
-                {currentUser.name?.charAt(0).toUpperCase() || 'U'}
-              </Avatar>
-              <Typography variant="subtitle1" sx={{ color: 'white' }}>
-                {currentUser.name}
-              </Typography>
-            </Box>
-          )}
   
             {/* Desktop nav */}
             <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
@@ -109,7 +96,9 @@ import { useNavigate } from 'react-router-dom';
               >
                 Logout
               </Button>
+  
             )}
+             <UserAvatar  currentUser={currentUser}/>
             </Box>
   
             {/* Mobile menu icon */}
@@ -144,6 +133,7 @@ import { useNavigate } from 'react-router-dom';
                 <ListItemText primary="Logout" />
               </ListItemButton>
             )}
+            <UserAvatar  currentUser={currentUser}/>
             </List>
           </Box>
         </Drawer>

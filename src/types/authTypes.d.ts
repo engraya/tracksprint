@@ -21,3 +21,4 @@ export interface AuthState {
   currentUser: User | null;
   isAuthenticated: boolean;
 }
+

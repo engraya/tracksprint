@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User, AuthState } from '../../types/authTypes';
 
-// Load initial state from localStorage if available
+
+
 const savedUser = localStorage.getItem('currentUser');
 const initialState: AuthState = {
   currentUser: savedUser ? JSON.parse(savedUser) : null,

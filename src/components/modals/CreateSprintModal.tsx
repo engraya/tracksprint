@@ -12,14 +12,10 @@ import { supabase } from '../../lib/supabase';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { toast } from 'react-toastify';
+import { CreateSprintProps } from '../../types/tasksTypes';
 
-interface Props {
-  open: boolean;
-  onClose: () => void;
-  onCreated: () => void; 
-}
 
-const CreateSprintModal: React.FC<Props> = ({ open, onClose, onCreated }) => {
+const CreateSprintModal: React.FC<CreateSprintProps> = ({ open, onClose, onCreated }) => {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const currentUser = useSelector((state: RootState) => state.auth.currentUser);
