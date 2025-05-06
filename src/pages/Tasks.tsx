@@ -6,7 +6,6 @@ import {
   Collapse,
   List,
   ListItemText,
-  Divider,
   Chip,
   Card,
   CardContent,
@@ -21,6 +20,7 @@ import CreateTaskModal from '../components/modals/CreateTaskModal';
 import DeleteTaskModal from '../components/modals/DeleteTaskModal';
 import { Task } from '../types/tasksTypes';
 import ListItem from '@mui/material/ListItem';
+import { Badge } from '@mui/material';
 
 function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -77,12 +77,12 @@ function Tasks() {
   };
 
 const handleContextMenu = (
-  e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  e: React.MouseEvent<HTMLLIElement>,
   task: Task
 ) => {
-  e.preventDefault(); // Prevent the default right-click menu
-  setSelectedTask(task); // Store selected task
-  setAnchorEl(e.currentTarget); // Open the custom context menu
+  e.preventDefault(); 
+  setSelectedTask(task); 
+  setAnchorEl(e.currentTarget);
 };
 
 
@@ -97,59 +97,93 @@ const handleContextMenu = (
 
   const renderTasks = (parentId: string | null = null, depth = 0) => {
     const parentTasks = buildTree(tasks, parentId).slice(0, visibleCount);
-
+  
     return parentTasks.map((task) => {
       const children = buildTree(tasks, task.id);
       const totalHours = children.length
         ? children.reduce((sum, child) => sum + child.estimated_hour, 0)
         : task.estimated_hour;
-
+  
       return (
-        <Box key={task.id} sx={{ pl: depth * 4, borderLeft: depth ? '2px solid #ccc' : 'none', my: 1 }}>
-          <ListItem
-            button
-            onClick={() => handleTaskClick(task)}
-            onContextMenu={(e) => handleContextMenu(e, task)}  
+        <Box key={task.id} sx={{ pl: depth * 4, position: 'relative' }}>
+          <Box
+            sx={{
+              borderLeft: depth ? '2px solid #e0e0e0' : 'none',
+              ml: depth ? 1 : 0,
+              py: 1,
+            }}
           >
-            <ListItemText
-              primary={
-                <Box display="flex" gap={1} alignItems="center">
-                  <Typography fontWeight={600}>{task.subject}</Typography>
-                  {children.length > 0 && (
-                    <Chip label="Parent" color="primary" size="small" />
-                  )}
-                </Box>
-              }
-              secondary={
-                <>
-                  <Typography variant="body2">Status: {task.status}</Typography>
-                  <Typography variant="body2">Estimated Hours: {totalHours}</Typography>
-                  <Typography variant="body2">
-                    Sprint: {task.sprints?.name || 'N/A'}
-                  </Typography>
-                  <Typography variant="body2">
-                    Assignee: {task.profiles?.full_name || 'N/A'}
-                  </Typography>
-                </>
-              }
-            />
-            {children.length > 0 && (expanded[task.id] ? <ExpandLessIcon /> : <ExpandMoreIcon />)}
-          </ListItem>
-          <Collapse in={expanded[task.id]} timeout="auto" unmountOnExit>
-            {children.length > 0 && renderTasks(task.id, depth + 1)}
-          </Collapse>
-          <Divider />
+            <ListItem
+              onClick={() => handleTaskClick(task)}
+              onContextMenu={(e) => handleContextMenu(e, task)}
+              sx={{
+                bgcolor: 'white',
+                borderRadius: 2,
+                boxShadow: 1,
+                transition: 'all 0.2s ease-in-out',
+                '&:hover': {
+                  boxShadow: 4,
+                  backgroundColor: '#f9f9f9',
+                },
+                mb: 1,
+              }}
+            >
+              <ListItemText
+                primary={
+                  <Box display="flex" gap={1} alignItems="center">
+                    <Typography fontWeight={600}>{task.subject}</Typography>
+                    {children.length > 0 && (
+                      <Chip label="Parent" color="primary" size="small" />
+                    )}
+                  </Box>
+                }
+                secondary={
+                  <>
+                    <Typography variant="body2">Status: {task.status}</Typography>
+                    <Typography variant="body2">Estimated Hours: {totalHours}</Typography>
+                    <Typography variant="body2">
+                      Sprint: {task.sprints?.name || 'N/A'}
+                    </Typography>
+                    <Typography variant="body2">
+                      Assignee: {task.profiles?.full_name || 'N/A'}
+                    </Typography>
+                  </>
+                }
+              />
+              {children.length > 0 &&
+                (expanded[task.id] ? <ExpandLessIcon /> : <ExpandMoreIcon />)}
+            </ListItem>
+  
+            <Collapse in={expanded[task.id]} timeout="auto" unmountOnExit>
+              {children.length > 0 && renderTasks(task.id, depth + 1)}
+            </Collapse>
+          </Box>
         </Box>
       );
     });
   };
+  
 
   return (
     <Box p={4}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4">Task Tree View</Typography>
+        <Badge
+          badgeContent={tasks.length}
+          color="success"
+          sx={{
+            '& .MuiBadge-badge': {
+              right: -8,
+              top: 8,
+              padding: '0 6px',
+              fontSize: '0.75rem',
+            },
+          }}
+        >
+          <Typography variant="h4">Tasks</Typography>
+        </Badge>
+
         <Button
-          variant="contained"
+          variant="outlined"
           color="primary"
           onClick={() => {
             setOpenModal(true);
@@ -157,10 +191,9 @@ const handleContextMenu = (
             setIsUpdate(false); 
           }}
         >
-          + Create Task
+          + Add Task
         </Button>
       </Box>
-
       {loading ? (
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
           <CircularProgress size={24} color="inherit" sx={{ mr: 1 }} />
@@ -180,7 +213,7 @@ const handleContextMenu = (
 
       {tasks.length > visibleCount && (
         <Box textAlign="center" mt={2}>
-          <Button onClick={() => setVisibleCount((prev) => prev + 5)}>Load More</Button>
+          <Button variant="contained" color="success" onClick={() => setVisibleCount((prev) => prev + 5)}>Load More</Button>
         </Box>
       )}
 

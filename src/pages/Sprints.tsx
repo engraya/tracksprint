@@ -53,7 +53,7 @@ function Sprints() {
         mb={4}
       >
         <Typography variant="h4">Sprints</Typography>
-        <Button variant="contained" color="primary" onClick={handleOpenModal}>
+        <Button variant="outlined" color="primary" onClick={handleOpenModal}>
           + Add Sprint
         </Button>
       </Box>
@@ -73,22 +73,42 @@ function Sprints() {
             </CardContent>
         </Card>
         ) : (
-          <Grid container spacing={2}>
-          {sprints.map((sprint) => (
-            // @ts-ignore
-            <Grid item xs={12} sm={6} md={4} key={sprint.id}>
-              <Card variant="outlined">
-                <CardContent>
-                  <Typography variant="h6">{sprint.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Created on:{' '}
-                    {new Date(sprint.created_at).toLocaleDateString()}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+      <Grid container spacing={3}>
+        {sprints.map((sprint) => (
+          // @ts-ignore
+          <Grid item xs={12} sm={6} md={4} key={sprint.id}>
+            <Card
+              sx={{
+                p: 2,
+                borderRadius: 2,
+                boxShadow: 3,
+                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: 6,
+                  backgroundColor: '#f5f5f5',
+                },
+                height: '100%',
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" fontWeight={600} gutterBottom>
+                  {sprint.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Created on:{' '}
+                  {new Date(sprint.created_at).toLocaleDateString(undefined, {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
         )}
       <CreateSprintModal
         open={isModalOpen}

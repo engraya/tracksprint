@@ -16,6 +16,10 @@ import { toast } from 'react-toastify';
 import { CreateTaskModalProps } from '../../types/tasksTypes';
 import { statusOptions } from '../../lib/status';
 import { Sprint, Task } from '../../types/tasksTypes';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
+
+
 function CreateTaskModal({ open, onClose, onTaskCreated, task, isUpdate }: CreateTaskModalProps) {
   const [subject, setSubject] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,6 +32,8 @@ function CreateTaskModal({ open, onClose, onTaskCreated, task, isUpdate }: Creat
   const [parentTasks, setParentTasks] = useState<Task[]>([]);
   const [warning, setWarning] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const currentUser = useSelector((state: RootState) => state.auth.currentUser);
 
   useEffect(() => {
     if (open) {
@@ -129,6 +135,7 @@ function CreateTaskModal({ open, onClose, onTaskCreated, task, isUpdate }: Creat
         parent_id: parentId || null,
         estimated_hour: Number(estimatedHour),
         sprint_id: sprintId,
+        user_id: currentUser?.id,
         description,
       }]);
   
