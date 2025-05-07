@@ -11,7 +11,7 @@ import CreateSprintModal from '../components/modals/CreateSprintModal';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Sprint } from '../types/tasksTypes';
 import Grid from '@mui/material/Grid';
-
+import { Badge } from '@mui/material';
 function Sprints() {
   const [sprints, setSprints] = useState<Sprint[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,17 +46,21 @@ function Sprints() {
 
   return (
     <Box p={4}>
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={4}
-      >
+    <Box
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      mb={4}
+    >
+      <Badge badgeContent={sprints.length} color="success" sx={{ mr: 2 }}>
         <Typography variant="h4">Sprints</Typography>
-        <Button variant="outlined" color="primary" onClick={handleOpenModal}>
-          + Add Sprint
-        </Button>
-      </Box>
+      </Badge>
+
+      <Button variant="outlined" color="primary" onClick={handleOpenModal}>
+        + Add Sprint
+      </Button>
+    </Box>
+
 
 
       {loading ? (
