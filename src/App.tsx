@@ -1,6 +1,6 @@
-import { useEffect, useCallback, Suspense } from 'react';
+import { useEffect, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Layout from './layouts/Layout';
@@ -12,32 +12,14 @@ import PrivateRoute from './routes/PrivateRoute';
 import PublicRoute from './routes/PublicRoute';
 import { supabase } from './lib/supabase';
 import { loginUser } from './store/reducers/auth';
-import { RootState } from './store';
 import Tasks from './pages/Tasks';
 import { logoutUser } from './store/reducers/auth';
 
 function App() {
   const dispatch = useDispatch();
-  const currentUser = useSelector((state: RootState) => state.auth.currentUser);
 
-  const syncAuthState = useCallback(async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-
-    if (user && !currentUser) {
-      dispatch(
-        loginUser({
-          id: user.id,
-          email: user.email ?? '',
-          name: user.user_metadata?.name ?? '',
-        })
-      );
-    }
-  }, [dispatch, currentUser]);
 
   useEffect(() => {
-    syncAuthState();
-  
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       const user = session?.user;
   
@@ -57,11 +39,29 @@ function App() {
         dispatch(logoutUser());
       }
     });
+    // Optionally fetch initial session once and act only if there's a session
+    (async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+  
+      const user = session?.user;
+      if (user) {
+        dispatch(
+          loginUser({
+            id: user.id,
+            email: user.email ?? '',
+            name: user.user_metadata?.name ?? '',
+          })
+        );
+      }
+    })();
   
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, [syncAuthState, dispatch]);
+  }, [dispatch]);
+  
 
   return (
     <BrowserRouter>

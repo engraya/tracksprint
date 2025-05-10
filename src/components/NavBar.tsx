@@ -131,9 +131,11 @@ import ErrorBoundary from './ErrorBoundary';
             </Button>
   
             )}
-            <ErrorBoundary>
-              <UserAvatar currentUser={currentUser} />
-            </ErrorBoundary>
+            {currentUser && (
+              <ErrorBoundary>
+                <UserAvatar currentUser={currentUser} />
+              </ErrorBoundary>
+            )}
             </Box>
   
             {/* Mobile menu icon */}

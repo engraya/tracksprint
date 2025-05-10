@@ -6,7 +6,7 @@ import { Outlet } from 'react-router-dom';
 const Layout = () => (
   <Box display="flex" flexDirection="column" minHeight="100vh">
     <Navbar />
-    <Container component="main" sx={{ flex: 1 }}>
+    <Container component="main" sx={{ flex: 2 }}>
       <Outlet />
     </Container>
     <Footer />
