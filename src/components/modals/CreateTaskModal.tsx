@@ -1,14 +1,20 @@
 import {
+  CircularProgress,
+  Alert,
   Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
   MenuItem,
+  Select,
   TextField,
-  CircularProgress,
-  Alert,
+  Typography,
+  OutlinedInput,
+  Chip
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
@@ -18,7 +24,7 @@ import { statusOptions } from '../../lib/status';
 import { Sprint, Task } from '../../types/tasksTypes';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
-
+import { mockAssignees } from '../../lib/assignees';
 
 function CreateTaskModal({ open, onClose, onTaskCreated, task, isUpdate }: CreateTaskModalProps) {
   const [subject, setSubject] = useState('');
@@ -32,6 +38,7 @@ function CreateTaskModal({ open, onClose, onTaskCreated, task, isUpdate }: Creat
   const [parentTasks, setParentTasks] = useState<Task[]>([]);
   const [warning, setWarning] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [assignees, setAssignees] = useState<string[]>([]);
 
   const currentUser = useSelector((state: RootState) => state.auth.currentUser);
 
@@ -47,6 +54,8 @@ function CreateTaskModal({ open, onClose, onTaskCreated, task, isUpdate }: Creat
         setEstimatedHour(String(task.estimated_hour));
         setSprintId(task.sprint_id || '');
         setDescription(task.description);
+        setAssignees(task.assignees || []);
+        
       }
     } else {
       // Clear form when modal is closed
@@ -58,6 +67,7 @@ function CreateTaskModal({ open, onClose, onTaskCreated, task, isUpdate }: Creat
       setDescription('');
       setErrors({});
       setWarning('');
+      setAssignees([]);
     }
   }, [open, isUpdate, task]);
 
@@ -79,6 +89,7 @@ function CreateTaskModal({ open, onClose, onTaskCreated, task, isUpdate }: Creat
     if (!status) newErrors.status = 'Status is required';
     if (!estimatedHour || isNaN(Number(estimatedHour))) newErrors.estimatedHour = 'Valid hour is required';
     if (!sprintId) newErrors.sprintId = 'Sprint is required';
+    if (!assignees.length) newErrors.assignees = 'At least one assignee is required';
     if (!description) newErrors.description = 'Description is required';
   
     setErrors(newErrors);
@@ -111,6 +122,7 @@ function CreateTaskModal({ open, onClose, onTaskCreated, task, isUpdate }: Creat
           estimated_hour: Number(estimatedHour),
           sprint_id: sprintId,
           description,
+          assignees
         })
         .eq('id', task.id);
   
@@ -137,6 +149,7 @@ function CreateTaskModal({ open, onClose, onTaskCreated, task, isUpdate }: Creat
         sprint_id: sprintId,
         user_id: currentUser?.id,
         description,
+        assignees
       }]);
   
       error = insertError;
@@ -242,6 +255,32 @@ function CreateTaskModal({ open, onClose, onTaskCreated, task, isUpdate }: Creat
               <MenuItem key={sprint.id} value={sprint.id}>{sprint.name}</MenuItem>
             ))}
           </TextField>
+                    {/* ✅ Multi-select Assignees Field */}
+                    <FormControl fullWidth error={!!errors.assignees}>
+            <InputLabel id="assignees-label">Assignees</InputLabel>
+            <Select
+              labelId="assignees-label"
+              multiple
+              value={assignees}
+              onChange={(e) => setAssignees(e.target.value as string[])}
+              input={<OutlinedInput label="Assignees" />}
+              renderValue={(selected) => (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {selected.map((value) => {
+                    const user = mockAssignees.find((u) => u.id === value);
+                    return <Chip key={value} label={user?.name || value} />;
+                  })}
+                </Box>
+              )}
+            >
+              {mockAssignees.map((user) => (
+                <MenuItem key={user.id} value={user.id}>
+                  {user.name}
+                </MenuItem>
+              ))}
+            </Select>
+            {errors.assignees && <Typography color="error">{errors.assignees}</Typography>}
+          </FormControl>
           <TextField
             label="Description"
             value={description}

@@ -21,6 +21,8 @@ import DeleteTaskModal from '../components/modals/DeleteTaskModal';
 import { Task } from '../types/tasksTypes';
 import ListItem from '@mui/material/ListItem';
 import { Badge } from '@mui/material';
+import { mockAssignees } from '../lib/assignees';
+
 
 function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -40,7 +42,10 @@ function Tasks() {
     const { data, error } = await supabase
       .from('tasks')
       .select(`*, sprints(name)`)
+      // .select(`*, sprints(name), assignees:task_assignees(profiles:profiles(name))`)
       .order('created_at');
+
+      console.log('Fetched tasks:', data);
 
     if (error) {
       console.error('Error fetching tasks:', error);
@@ -64,10 +69,6 @@ function Tasks() {
   const buildTree = (tasks: Task[], parentId: string | null = null): Task[] =>
     tasks.filter((task) => task.parent_id === parentId);
   
-
-  // const toggleExpand = (id) => {
-  //   setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
-  // };
 
   const handleTaskClick = (task : Task) => {
     // Set selected task for updating and open the update modal
@@ -145,8 +146,26 @@ const handleContextMenu = (
                       Sprint: {task.sprints?.name || 'N/A'}
                     </Typography>
                     <Typography variant="body2">
-                      Assignee: {task.profiles?.full_name || 'N/A'}
-                    </Typography>
+                    Assignees:
+                    {task?.assignees.length > 0 ? (
+                      task?.assignees.map((assigneeId) => {
+                        const assignee = mockAssignees.find((a) => a.id === assigneeId);
+                        return (
+                          assignee && (
+                            <Chip
+                              key={assignee.id}
+                              label={assignee.name}
+                              avatar={<img src={assignee.avatar} alt={assignee.name} width={24} height={24} />}
+                              size="small"
+                              sx={{ mx: 0.5 }}
+                            />
+                          )
+                        );
+                      })
+                    ) : (
+                      <Chip label="No assignees" size="small" />
+                    )}
+                  </Typography>
                   </>
                 }
               />

@@ -6,11 +6,9 @@ export type Task = {
   estimated_hour: number;
   sprint_id: string;
   description: string;
+  assignees: string[];
   sprints?: {
     name: string;
-  };
-  profiles?: {
-    full_name: string;
   };
 };
 
@@ -42,3 +40,10 @@ export interface CreateSprintProps {
     onClose: () => void;
     onCreated: () => void; 
   }
+
+  export interface Assignee {
+    id: string;
+    name: string;
+    email: string;
+    avatar?: string;
+  }  
