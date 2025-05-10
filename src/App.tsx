@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import MainLayout from './layouts/MainLayout';
+import Layout from './layouts/Layout';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -67,7 +67,7 @@ function App() {
     <BrowserRouter>
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
-          <Route path="/" element={<MainLayout />}>
+          <Route path="/" element={<Layout />}>
             {/* Public Routes */}
             <Route element={<PublicRoute />}>
               <Route path="login" element={<Login />} />

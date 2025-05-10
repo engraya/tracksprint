@@ -3,7 +3,7 @@ import Footer from '../components/Footer';
 import Navbar from '../components/NavBar';
 import { Outlet } from 'react-router-dom';
 
-const MainLayout = () => (
+const Layout = () => (
   <Box display="flex" flexDirection="column" minHeight="100vh">
     <Navbar />
     <Container component="main" sx={{ flex: 1 }}>
@@ -13,4 +13,4 @@ const MainLayout = () => (
   </Box>
 );
 
-export default MainLayout;
+export default Layout;
