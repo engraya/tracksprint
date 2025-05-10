@@ -14,6 +14,7 @@ import { supabase } from './lib/supabase';
 import { loginUser } from './store/reducers/auth';
 import { RootState } from './store';
 import Tasks from './pages/Tasks';
+import { logoutUser } from './store/reducers/auth';
 
 function App() {
   const dispatch = useDispatch();
@@ -36,21 +37,27 @@ function App() {
 
   useEffect(() => {
     syncAuthState();
-
-    // Optional: listen to auth changes (e.g., from another tab)
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+  
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       const user = session?.user;
-      if (user) {
-        dispatch(
-          loginUser({
-            id: user.id,
-            email: user.email ?? '',
-            name: user.user_metadata?.name ?? '',
-          })
-        );
+  
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        if (user) {
+          dispatch(
+            loginUser({
+              id: user.id,
+              email: user.email ?? '',
+              name: user.user_metadata?.name ?? '',
+            })
+          );
+        }
+      }
+  
+      if (event === 'SIGNED_OUT') {
+        dispatch(logoutUser());
       }
     });
-
+  
     return () => {
       authListener?.subscription.unsubscribe();
     };
