@@ -1,26 +1,29 @@
-## <a name="core">🛋️ LosodeHomeware</a>
+## <a name="core">🏃‍♂️ TrackSprint</a>
 
-LosodeHomeware is a modern eCommerce platform focused on selling premium homeware products. Designed with performance and user experience in mind, it allows users to explore, search, and shop for home goods with ease. It’s built using cutting-edge technologies like React, Next.js, TypeScript, Tailwind CSS, and features lightning-fast product search with Fuse.js.
+TrackSprint is your all-in-one task and sprint management platform. Create, assign, and track tasks effortlessly with full user authentication, real-time updates, and intuitive controls — all built for high performance and productivity.
 
 ## <a name="tech-stack">⚙️ Tech Stack</a>
 
-- React.js - Javascript Library for building User Interfaces.
-- Next.js - React framework for server-side rendering, static site generation, and routing.
-- TypeScript - A superset of JavaScript that adds static typing.
-- Tailwind CSS - Utility-first CSS framework for rapidly building custom designs.
-- Fuse.js – Lightweight fuzzy search for blazing fast client-side filtering.
-- Context API – Built-in state management for handling global search state.
+- React (with Vite) – Fast front-end tooling for blazing development speed.
+- Redux Toolkit – Simplified and scalable state management.
+- Formik + Yup – Robust forms with powerful validation.
+- Supabase – Backend-as-a-service for database, auth, and real-time functionality.
+- Axios – Promise-based HTTP client.
+- Material UI (MUI) – Accessible, responsive component library.
+- TypeScript – Type-safe codebase for maintainability and scalability.
+- React Testing Library + Vitest – Reliable and easy-to-use testing tools.
 
 
 ## <a name="features">🔋 Features</a>
 
-- 🛍️ eCommerce Homeware Catalog – A curated list of stylish and functional home products.
-- 🔍 Instant Product Search – Fuzzy, typo-tolerant product search using Fuse.js.
-- 📱 Responsive UI – Mobile-first responsive design powered by Tailwind.
-- 🧠 Smart Filtering – Context-based search display that reorders or hides components based on search activity.
-- 🚀 Next.js Optimizations – Fast rendering, image optimization, and SEO support.
-- 🎨 Reusable Components – Modular architecture with clean and maintainable code.
-- 🧼 Clean Design – Aesthetic UI with clear visual hierarchy and interaction feedback.
+- 📝 Task Management – Create, update, and view tasks with ease.
+- 🧠 Sprint Organization – Group tasks under sprint cycles for agile tracking.
+- 👥 Mock Assignees – Assign tasks to predefined mock team members.
+- 🔐 Authentication – User login/signup via Supabase.
+- 📄 Validation – All forms validated with Formik and Yup.
+- 💡 Modern UI – Clean and responsive UI using Material UI.
+- 🔄 Real-time Updates (coming soon) – Stay in sync with team changes.
+- 🧪 Test Coverage – Tested components for reliable behavior.
 
 ## <a name="quick-start">🤸 Quick Start</a>
 
@@ -39,8 +42,8 @@ Make sure you have the following installed on your machine:
 **Cloning the Repository**
 
 ```bash
-git clone https://github.com/engraya/losode-homeware
-cd losode-homeware
+git clone https://github.com/engraya/tracksprint
+cd tracksprint
 ```
 
 **Project Structure**
@@ -49,7 +52,7 @@ cd losode-homeware
 **Setup**
 1.Navigate to the frontend folder:
 ```bash
-cd ../losode-homeware
+cd ../tracksprint
 ```
 2.Install dependencies:
 ```bash
@@ -61,7 +64,7 @@ npm run dev
 ```
 4. Open your browser and go to:
 ```bash
-http://localhost:3000
+http://localhost:5173
 ```
 
 **Installation**
@@ -70,37 +73,51 @@ Install the project dependencies using npm:
 
 ```bash
 # Clone the repository
-git clone https://github.com/engraya/losode-homeware
+git clone https://github.com/engraya/tracksprint
 
 # Navigate into the project
-dc losode-homeware
+dc tracksprint
 
 # Install dependencies
 npm install   # or yarn install
 ```
 
+**🧱 Project Structure (Simplified)**
+
+
+```bash
+src/
+├── components/       # Reusable UI components
+├── assets/           # static files and images
+├── layouts/          # layout files
+├── lib/              # global functions and db configs
+├── pages/            # Route views
+├── types/            # TypeScript types
+├── routes/           # Public and Private routes configs
+├── services/         # Supabase & Axios utils
+├── store/            # Redux slices and logic
+└── validations/      # Global validations logic
+```
+
 
 ## <a name="usage">🎨 How it Works</a>
 
-1. The home page displays all sections including Hero, Featured, Categories, and Products.
-2. When a user types in the search field, the global search state is updated using Context API.
-3. The Products component listens to the search query and uses Fuse.js to filter results.
-4. If a search is active:
-    - Products are shown at the top.
-    - Other components are hidden.
-5. If no product matches the search:
-    -A friendly message suggests exploring other categories.
+1. Users can log in or sign up with Supabase auth.
+2. On the dashboard, users can create sprints and view them in a list or tree.
+3. Each sprint can have tasks added with descriptions, assignees, status, and estimated hours.
+4. Tasks are linked to mock assignees for simplicity.
+5. Users can edit task details and see nested parent-child task relationships.
 
 
 ## <a name="usage">🔥 Future Enhancements</a>
 
-- 🛒 Add to Cart & Checkout Flow
-- 👥 User Authentication & Profile Management
-- 📊 Admin Dashboard for Inventory Management
-- 💳 Payment Integration (Stripe/Paystack)
-- 🌍 Internationalization & Currency Conversion
+- 🟢 Real-time updates with Supabase subscriptions
+- 📊 Admin overview dashboard
+- 🔁 Drag-and-drop task reordering
+- 🔔 Notifications system
+- 🧑‍🤝‍🧑 Auth-based task ownership (per real users)
+- 🗃️ Task history and activity logs
 
-  
 
 ## <a name="usage">🤝 Contributing</a>
 
@@ -110,18 +127,27 @@ Contributions are welcome! To contribute:
 2. Create a new branch: git checkout -b feature-branch
 3. Commit changes: git commit -m "Added new feature"
 4. Push to GitHub: git push origin feature-branch
-5. Open a Pull Request.
+5. Open a Pull Request 🎉
 
 
 ## <a name="usage">🙌 Acknowledgments</a>
 
-Special thanks to:
-- Fuse.js for blazing fast client-side filtering.
-- The React, Vercel & Nextjs communities for their amazing tools!
+- Supabase for providing an easy and powerful backend-as-a-service.
+- Redux Toolkit team for simplifying state management in React.
+- Material UI (MUI) for the elegant and accessible component library.
+- Formik + Yup community for robust form handling and validation tools.
+- The React, Vite, and TypeScript communities for their outstanding ecosystem and developer experience.
+
+
 
 
 ## <a name="usage">🌐 Deployment</a>
-You can deploy losode-homeware on platforms like Vercel, Render, AWS Lambda, Firebase Functions, or Heroku.
+You can deploy Tracksprint on platforms like Vercel, Render, AWS Lambda, Firebase Functions, or Heroku.
+
+Steps:
+     - Connect your GitHub repo to the platform.
+     - Set environment variables for Supabase (API key, URL).
+     - Build and deploy!
 
 Vercel Deployment
 - Push the project to a GitHub repository.
