@@ -42,10 +42,7 @@ function Tasks() {
     const { data, error } = await supabase
       .from('tasks')
       .select(`*, sprints(name)`)
-      // .select(`*, sprints(name), assignees:task_assignees(profiles:profiles(name))`)
       .order('created_at');
-
-      console.log('Fetched tasks:', data);
 
     if (error) {
       console.error('Error fetching tasks:', error);
@@ -71,7 +68,6 @@ function Tasks() {
   
 
   const handleTaskClick = (task : Task) => {
-    // Set selected task for updating and open the update modal
     setSelectedTask(task);
     setIsUpdate(true);
     setOpenModal(true);
@@ -88,12 +84,12 @@ const handleContextMenu = (
 
 
   const handleMenuClose = () => {
-    setAnchorEl(null); // Close the context menu
+    setAnchorEl(null); 
   };
 
   const handleDeleteTask = () => {
-    setOpenDeleteModal(true); // Open the delete task confirmation modal
-    handleMenuClose(); // Close the context menu
+    setOpenDeleteModal(true);
+    handleMenuClose(); 
   };
 
   const renderTasks = (parentId: string | null = null, depth = 0) => {
@@ -141,9 +137,9 @@ const handleContextMenu = (
                 secondary={
                   <>
                     <Typography variant="body2">Status: {task.status}</Typography>
-                    <Typography variant="body2">Estimated Hours: {totalHours}</Typography>
+                    <Typography variant="body2">Estimated Hour: {totalHours}</Typography>
                     <Typography variant="body2">
-                      Sprint: {task.sprints?.name || 'N/A'}
+                      Related Sprint: {task.sprints?.name || 'N/A'}
                     </Typography>
                     <Typography variant="body2">
                     Assignees:
@@ -242,7 +238,7 @@ const handleContextMenu = (
         onClose={() => setOpenModal(false)}
         onTaskCreated={fetchTasks}
         task={selectedTask}  // Task data is passed here (null for creating)
-        isUpdate={isUpdate}  // Decide if it's create or update mode
+        isUpdate={isUpdate}
       />
 
       {/* Delete Task Confirmation Modal */}

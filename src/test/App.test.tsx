@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import App from './App';
-import store from './store';
+import App from '../App';
+import store from '../store';
 import { vi } from 'vitest';
 
 // Mock supabase
