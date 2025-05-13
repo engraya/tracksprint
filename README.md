@@ -84,6 +84,8 @@ npm install   # or yarn install
 
 **🧱 Project Structure (Simplified)**
 
+![Database Schema](./assets/schema.png)
+
 
 ```bash
 src/
