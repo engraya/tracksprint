@@ -79,7 +79,7 @@ function App() {
               <Route path="sprints" element={<Sprints />} />
               <Route path="tasks" element={<Tasks />} />
             </Route>
-
+            
             {/* Home Route */}
             <Route index element={<Home />} />
           </Route>
