@@ -77,10 +77,10 @@ function Sprints() {
             </CardContent>
         </Card>
         ) : (
-      <Grid container spacing={3}>
+      <Grid container direction="column" spacing={3}>
         {sprints.map((sprint) => (
           // @ts-ignore
-          <Grid item xs={12} sm={6} md={4} key={sprint.id}>
+          <Grid item key={sprint.id}>
             <Card
               sx={{
                 p: 2,
@@ -92,7 +92,6 @@ function Sprints() {
                   boxShadow: 6,
                   backgroundColor: '#f5f5f5',
                 },
-                height: '100%',
               }}
             >
               <CardContent>
@@ -112,7 +111,6 @@ function Sprints() {
           </Grid>
         ))}
       </Grid>
-
         )}
       <CreateSprintModal
         open={isModalOpen}
