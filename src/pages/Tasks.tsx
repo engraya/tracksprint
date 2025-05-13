@@ -232,7 +232,6 @@ const handleContextMenu = (
         </Box>
       )}
 
-      {/* Conditionally render the CreateTaskModal or UpdateTaskModal based on isUpdate */}
       <CreateTaskModal
         open={openModal}
         onClose={() => setOpenModal(false)}
