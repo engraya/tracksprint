@@ -20,7 +20,7 @@ import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import UserAvatar from './UserAvatar';  
 import ErrorBoundary from './ErrorBoundary';
-import { LogoIcon } from './icons/Icons';
+import { LogoIcon } from './icons/CustomIcons';
 
 
   const Navbar = () => {
